@@ -15,7 +15,6 @@
       console.log(tx)
   }
 
-
 </script>
 
 <form class="flex gap-4 justify-end" on:submit|preventDefault={makeDonation}>

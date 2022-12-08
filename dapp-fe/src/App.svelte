@@ -6,7 +6,7 @@
   import MakeDonation from "./lib/MakeDonation.svelte";
   import { onMount } from "svelte";
   import DonationList from "./lib/DonationList.svelte";
-  import {web3} from './stores/web3provide'
+  import CharityPay from "./lib/CharityPay.svelte";
 
   const abi = Contract.abi
   const address = Contract.networks[5777].address
@@ -18,9 +18,18 @@
     window.contract = await new window.web3.eth.Contract(abi, address)
     console.log("contract connected.")
   }
-  // onMount(async () => {
-  connectContract();
-  // })
+  onMount(async () => {
+    await connectContract();
+  })
+
+  let tab = 0;
+
+  let tabs = [
+    "Donation Transactions",
+    "Charity Pay Transactions",
+  ]
+
+  let active = (pos, tab) => ( (pos == tab) ? "bg-blue-100 text-blue-900" : "bg-gray-100")
 
   // let donations = [];
 
@@ -28,24 +37,6 @@
     // @ts-ignore
     let data = await window.contract.methods.DonationList(1).call();
     console.log(data)
-  }
-
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-  const viewDonations = async () => {
-    await sleep(1)
-    // @ts-ignore
-    const len = await window.contract.methods.totalDonations().call();
-
-    let donations = [];
-    for (let index = 0; index < len; index++) {
-      // @ts-ignore
-      let data = await window.contract.methods.DonationList(index).call();
-      donations[index] = data
-      // console.log(new Date(parseInt(data.time)*1000))
-    }
-
-    return donations
   }
 </script>
 
@@ -60,38 +51,18 @@
   <div>
   <div class="pt-24 w-4/5 mx-auto">
     <!-- <button class="bg-gray-200 px-4 py-2 rounded-full" on:click={connectContract}>Connect Contract</button> -->
-    <button class="bg-gray-200 px-4 py-2 rounded-full"on:click={readContract}>Read Contract</button>
-    <MakeDonation />
-    <!-- <DonationList /> -->
-    <div class="flex flex-col gap-2 pt-8">
-        {#await viewDonations()}
-            ..loading..
-        {:then donations} 
-            {#if donations.length > 0}
-                <div class="flex gap-4 font-bold">
-                    <div class="flex-1"> Donor Name </div>
-                    <div class="flex-1"> Transaction Time </div>
-                    <div class="flex-1 flex justify-end"> Donation </div>
-                </div>
-                {#each donations as donation}
-                    <div class="flex gap-4">
-                        <div class="flex-1"> 
-                            {donation.donorName} ({donation.donorAddr.toLowerCase().substring(0,10)}...{donation.donorAddr.toLowerCase().substring(34)})
-                        </div>
-                        <div class="flex-1"> {(new Date(parseInt(donation.time)*1000)).toLocaleString("en-IN")}</div>
-                        <div class="flex-1 flex justify-end"> 
-                            {$web3.utils.fromWei(donation.donateAmount, 'Gwei')} Gwei 
-                        </div>
-                    </div>
-                {/each}
-            {:else}
-                <div class="flex flex-col items-center justify-center">
-                    <!-- <EmptySvg /> -->
-                    <div class="pt-4">No donations made</div>
-                </div>
-            {/if}
-        {/await}
-
+    <!-- <button class="bg-gray-200 px-4 py-2 rounded-full"on:click={readContract}>Read Contract</button> -->
+    <div class="bg-gray-100 rounded-full flex gap-0 w-full font-medium my-10 bg-grapy-200">
+      {#each tabs as opt, i}
+      <button class="{active(i, tab)} flex-1 px-4 py-6 rounded-full" on:click={() => (tab = i)}>{opt}</button>
+      <!-- <button class="bg-gray-200 flex-1 px-4 py-6 rounded-full"on:click={() => (tab = 1)}>Charity Pay Transactions</button> -->
+      {/each}
     </div>
+    {#if tab == 1}
+      <CharityPay />
+    {:else}
+      <MakeDonation />
+      <DonationList />
+    {/if}
   </div>
 </main>
