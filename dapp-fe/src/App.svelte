@@ -6,7 +6,9 @@
   import MakeDonation from "./lib/MakeDonation.svelte";
   import { onMount } from "svelte";
   import DonationList from "./lib/DonationList.svelte";
-  import CharityPay from "./lib/CharityPay.svelte";
+  import CharityPay from "./lib/PaymentsList.svelte";
+  import MakePayments from "./lib/MakePayments.svelte";
+  import Beneficiaries from "./lib/Beneficiaries.svelte";
 
   const abi = Contract.abi
   const address = Contract.networks[5777].address
@@ -27,6 +29,8 @@
   let tabs = [
     "Donation Transactions",
     "Charity Pay Transactions",
+    "Benefeciaries",
+    "Owner Options",
   ]
 
   let active = (pos, tab) => ( (pos == tab) ? "bg-blue-100 text-blue-900" : "bg-gray-100")
@@ -60,9 +64,15 @@
     </div>
     {#if tab == 1}
       <CharityPay />
+    {:else if tab == 2}
+      <Beneficiaries />
+    {:else if tab == 3}
+      <MakePayments />
     {:else}
-      <MakeDonation />
-      <DonationList />
+      <div class="flex gap-x-24 items-start">
+        <DonationList />
+        <MakeDonation />
+      </div>
     {/if}
   </div>
 </main>

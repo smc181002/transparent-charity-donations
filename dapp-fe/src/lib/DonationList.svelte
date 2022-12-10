@@ -27,7 +27,7 @@
   }
 
 </script>
-<div class="flex flex-col gap-4 pt-8">
+<div class="flex flex-1 flex-col gap-4 pt-8">
     {#await viewDonations()}
     <div class="flex justify-center w-full mx-auto">
         loading

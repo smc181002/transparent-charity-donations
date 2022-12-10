@@ -11,6 +11,7 @@ contract TrustedDonations {
 
     uint public totalDonations;
     uint public totalCharity;
+    uint public totalBeneficiaries;
 
     struct Donation {
         uint donateAmount;
@@ -70,6 +71,7 @@ contract TrustedDonations {
         ));
         owner.requiredFunds += required;
         doesBenExist[accNo] = true;
+        totalBeneficiaries++;
     }
 
     function deleteBeneficiary(address accountNum) public {
@@ -86,6 +88,7 @@ contract TrustedDonations {
         owner.requiredFunds = owner.requiredFunds - beneficiaries[index].bReq;
         beneficiaries.pop();
         doesBenExist[accountNum] = false;
+        totalBeneficiaries--;
     }
 
     function makeDonation(
